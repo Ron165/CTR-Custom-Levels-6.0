@@ -2,29 +2,60 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Cut the Rope - Níveis</title>
+<title>Cut the Rope - Jogo Completo</title>
 <style>
 body { font-family: Arial; text-align: center; background:#f2e0c9; }
 h1 { margin-top:20px; }
-.grid { display:grid; grid-template-columns: repeat(5, 100px); gap:15px; justify-content:center; margin-top:30px; }
-a { text-decoration:none; }
-button { padding:15px; font-size:16px; border:none; border-radius:10px; cursor:pointer; width:100%; }
-.locked { background:#999; cursor:not-allowed; }
+.grid { display:grid; grid-template-columns: repeat(5, 80px); gap:10px; justify-content:center; }
+button { padding:10px; border:none; border-radius:10px; cursor:pointer; }
+.locked { background:#999; }
 .unlocked { background:#4CAF50; color:white; }
 .completed { background:#FFD700; }
-#completeBtn { margin-top:20px; padding:10px 20px; display:none; }
+.box { margin:20px auto; padding:15px; border-radius:15px; width:300px; background:#d9b38c; cursor:pointer; position:relative; }
+.hidden { display:none; }
+.starBtns { margin-top:20px; display:none; }
+.lockOverlay {
+  position:absolute; top:0; left:0; right:0; bottom:0;
+  background:rgba(0,0,0,0.6); color:white;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:15px; font-size:20px; font-weight:bold;
+  pointer-events:none;
+}
 </style>
 </head>
 <body>
 
-<h1>🍬 Cut the Rope - Mundo 1</h1>
+<h1>🍬 Cut the Rope - Jogo</h1>
 
-<div class="grid" id="levels"></div>
+<div class="box" onclick="toggle('season1')">
+<h2>📦 Caixa Inicial</h2>
+<div id="stars1"></div>
+<div class="grid hidden" id="season1" onclick="event.stopPropagation()"></div>
+</div>
 
-<button id="completeBtn" onclick="completeLevel()">✔ Terminei o nível</button>
+<div class="box" onclick="toggleSeason2()">
+<h2>✨ Magia e Saltos</h2>
+<div id="stars2"></div>
+<div id="lock2" class="lockOverlay"></div>
+<div class="grid hidden" id="season2" onclick="event.stopPropagation()"></div>
+</div>
+
+<div class="starBtns" id="starBtns">
+<button onclick="finish(1)">⭐</button>
+<button onclick="finish(2)">⭐⭐</button>
+<button onclick="finish(3)">⭐⭐⭐</button>
+</div>
+
+<br>
+<button onclick="startMusic()">🎵 Ligar Música</button>
+<button onclick="resetProgress()">🗑️ Eliminar progresso</button>
+
+<audio id="music" loop>
+<source src="https://cdn.pixabay.com/audio/2022/03/15/audio_5b3f6f5d7e.mp3">
+</audio>
 
 <script>
-const links = [
+const season1 = [
 "https://play.candies.monster/lTDT",
 "https://play.candies.monster/NHXI",
 "https://play.candies.monster/ePeK",
@@ -42,46 +73,123 @@ const links = [
 "https://play.candies.monster/dKXr"
 ];
 
-let progress = parseInt(localStorage.getItem("levelProgress")) || 1;
-let currentLevel = 0;
+const season2 = [
+"https://play.candies.monster/rEgN",
+"https://play.candies.monster/aVzu",
+"https://play.candies.monster/dzxy",
+"https://play.candies.monster/bPDj",
+"https://play.candies.monster/Aelr",
+"https://play.candies.monster/Tejh",
+"https://play.candies.monster/UgbA",
+"https://play.candies.monster/dOkj",
+"https://play.candies.monster/oQrx",
+"https://play.candies.monster/HAJA"
+];
 
-const container = document.getElementById("levels");
+let progress = parseInt(localStorage.getItem("progress")) || 1;
+let stars = JSON.parse(localStorage.getItem("stars")) || {};
 
-links.forEach((link, i) => {
-  const wrapper = document.createElement("a");
-  wrapper.href = link;
-  wrapper.target = "_blank";
-
-  const btn = document.createElement("button");
-  btn.innerText = i+1;
-
-  if (i+1 < progress) {
-    btn.className = "completed";
-    btn.onclick = () => showComplete(i);
-  } else if (i+1 === progress) {
-    btn.className = "unlocked";
-    btn.onclick = () => showComplete(i);
-  } else {
-    btn.className = "locked";
-    wrapper.removeAttribute("href");
-  }
-
-  wrapper.appendChild(btn);
-  container.appendChild(wrapper);
-});
-
-function showComplete(i) {
-  currentLevel = i+1;
-  document.getElementById("completeBtn").style.display = "inline-block";
+function toggle(id){
+  document.getElementById(id).classList.toggle("hidden");
 }
 
-function completeLevel() {
-  if (currentLevel === progress) {
+function totalStars(){
+  let total = 0;
+  for (let k in stars) total += stars[k];
+  return total;
+}
+
+function toggleSeason2(){
+  if(totalStars() >= 35){
+    toggle('season2');
+  }
+}
+
+function createLevels(list, containerId, offset) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+
+  list.forEach((link, i) => {
+    const levelNum = i + 1 + offset;
+
+    const btn = document.createElement("button");
+    btn.innerText = i+1;
+
+    if (levelNum < progress) {
+      btn.className = "completed";
+    } else if (levelNum === progress) {
+      btn.className = "unlocked";
+    } else {
+      btn.className = "locked";
+    }
+
+    btn.onclick = (e) => {
+      e.stopPropagation();
+
+      if(levelNum <= progress){
+        localStorage.setItem("currentLevel", levelNum);
+
+        const a = document.createElement('a');
+        a.href = link;
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        document.getElementById("starBtns").style.display = "block";
+      }
+    };
+
+    container.appendChild(btn);
+  });
+}
+
+function finish(n){
+  let lvl = parseInt(localStorage.getItem("currentLevel"));
+
+  if(lvl === progress){
+    stars[lvl] = n;
     progress++;
-    localStorage.setItem("levelProgress", progress);
+
+    localStorage.setItem("progress", progress);
+    localStorage.setItem("stars", JSON.stringify(stars));
+
     location.reload();
   }
 }
+
+function resetProgress(){
+  localStorage.clear();
+  location.reload();
+}
+
+function updateStars() {
+  let s1 = 0, s2 = 0;
+
+  for (let i = 1; i <= 15; i++) if (stars[i]) s1 += stars[i];
+  for (let i = 16; i <= 25; i++) if (stars[i]) s2 += stars[i];
+
+  document.getElementById("stars1").innerText = "⭐ " + s1 + " / 45";
+  document.getElementById("stars2").innerText = "⭐ " + s2 + " / 30";
+
+  let needed = 35 - totalStars();
+  let lock = document.getElementById("lock2");
+
+  if(needed > 0){
+    lock.innerText = needed + " ⭐";
+    lock.style.display = "flex";
+  } else {
+    lock.style.display = "none";
+  }
+}
+
+function startMusic(){
+  document.getElementById("music").play();
+}
+
+createLevels(season1, "season1", 0);
+createLevels(season2, "season2", 15);
+updateStars();
 </script>
 
 </body>
