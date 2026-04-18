@@ -2,152 +2,152 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Cut the Rope 5.0</title>
+<title>Cut the Rope 6.0 FINAL FIX</title>
 <style>
-body { font-family: Arial; text-align: center; background:#f2e0c9; margin:0; }
-.grid { display:grid; grid-template-columns: repeat(5, 80px); gap:10px; justify-content:center; }
-button { padding:10px; border:none; border-radius:10px; cursor:pointer; transition: transform 0.2s, box-shadow 0.2s; }
-button:hover { transform: scale(1.1); box-shadow:0 4px 10px rgba(0,0,0,0.3); }
-.locked { background:#5dade2; }
-.unlocked { background:#3498db; color:white; }
-.completed { background:#2e86c1; color:white; }
-.box { margin:20px auto; padding:15px; border-radius:15px; width:300px; background:#d9b38c; cursor:pointer; position:relative; transition: transform 0.2s; }
-.box:hover { transform: scale(1.03); }
-.hidden { display:none; }
-.starBtns { margin:20px auto; display:none; background:#fff; padding:10px; border-radius:10px; width:200px; }
-.levelStars { font-size:12px; display:block; }
-#codeInput { display:none; margin:10px; padding:5px; }
-.lockOverlay {
-  position:absolute; top:0; left:0; right:0; bottom:0;
-  background:rgba(0,0,0,0.6); color:white;
-  display:flex; align-items:center; justify-content:center;
-  border-radius:15px;
-}
-@media (max-width:600px){
-  .grid { grid-template-columns: repeat(4, 60px); }
-  button { padding:6px; font-size:12px; }
-  .box { width:90%; }
-}
+body{font-family:Arial;text-align:center;background:#f2e0c9}
+.box{margin:20px auto;padding:15px;border-radius:15px;width:320px;background:#d9b38c;cursor:pointer;position:relative}
+.grid{display:grid;grid-template-columns:repeat(5,60px);gap:8px;justify-content:center}
+button{padding:8px;border:none;border-radius:8px;cursor:pointer}
+.unlocked{background:#3498db;color:#fff}
+.locked{background:#7f8c8d}
+.hidden{display:none}
+.lockOverlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);color:#fff;display:flex;align-items:center;justify-content:center;border-radius:15px}
+.starBtns{margin:20px auto;background:#fff;padding:10px;border-radius:10px;width:220px}
 </style>
 </head>
 <body>
+<h1>🍬 Cut the Rope 6.0</h1>
 
-<h1>🍬 Cut the Rope 5.0</h1>
+<button onclick="toggleMusic()">🎵 Música</button>
+<button onclick="showCode()">🔓 Código</button>
+<input id="code" placeholder="Escreve código" style="display:none" onkeydown="applyCode(event)">
 
-<button onclick="showCodeInput()">🔓 Código</button><br>
-<input id="codeInput" placeholder="Código + Enter" onkeydown="checkCode(event)">
+<audio id="music" loop></audio>
 
-<div class="box" onclick="toggle('s1')"><h3>📦 Caixa Inicial</h3><div id="stars1"></div><div class="grid hidden" id="s1" onclick="event.stopPropagation()"></div></div>
-<div class="box" onclick="toggleS2()"><h3>✨ Magia</h3><div id="stars2"></div><div id="lock2" class="lockOverlay"></div><div class="grid hidden" id="s2" onclick="event.stopPropagation()"></div></div>
-<div class="box" onclick="toggleS3()"><h3>⚠️ Perigos</h3><div id="stars3"></div><div id="lock3" class="lockOverlay"></div><div class="grid hidden" id="s3" onclick="event.stopPropagation()"></div></div>
-<div class="box" onclick="toggleS4()"><h3>🌌 Gravidade</h3><div id="stars4"></div><div id="lock4" class="lockOverlay"></div><div class="grid hidden" id="s4" onclick="event.stopPropagation()"></div></div>
-<div class="box" onclick="toggleS5()"><h3>☠️ Zona de Risco</h3><div id="stars5"></div><div id="lock5" class="lockOverlay"></div><div class="grid hidden" id="s5" onclick="event.stopPropagation()"></div></div>
+<div class="box" onclick="toggle('s1')"><h3>📦 Caixa Inicial</h3><div id="l1"></div><div id="s1" class="grid hidden"></div></div>
+<div class="box" onclick="openBox(2)"><h3>✨ Magia</h3><div id="l2" class="lockOverlay"></div><div id="s2" class="grid hidden"></div></div>
+<div class="box" onclick="openBox(3)"><h3>⚠️ Perigos</h3><div id="l3" class="lockOverlay"></div><div id="s3" class="grid hidden"></div></div>
+<div class="box" onclick="openBox(4)"><h3>🌌 Distância</h3><div id="l4" class="lockOverlay"></div><div id="s4" class="grid hidden"></div></div>
+<div class="box" onclick="openBox(5)"><h3>☠️ Zona de Risco</h3><div id="l5" class="lockOverlay"></div><div id="s5" class="grid hidden"></div></div>
+<div class="box" onclick="openBox(6)"><h3>🎧 Fase Fantasma</h3><div id="l6" class="lockOverlay"></div><div id="s6" class="grid hidden"></div></div>
+<div class="box" onclick="openBox(7)"><h3>🏮 Lanternas</h3><div id="l7" class="lockOverlay"></div><div id="s7" class="grid hidden"></div></div>
 
-<!-- 🆕 CAIXA 6 -->
-<div class="box" onclick="toggleS6()"><h3>🎧 Fase Fantasma</h3><div id="stars6"></div><div id="lock6" class="lockOverlay"></div><div class="grid hidden" id="s6" onclick="event.stopPropagation()"></div></div>
-
-<div class="starBtns" id="starBtns">
+<!-- ⭐ BOTÕES AGORA FIXOS EM BAIXO -->
+<div class="starBtns" id="starsUI">
+<b>Dar estrelas ao último nível jogado:</b><br>
 <button onclick="finish(1)">⭐</button>
 <button onclick="finish(2)">⭐⭐</button>
 <button onclick="finish(3)">⭐⭐⭐</button>
 </div>
 
-<br><button onclick="resetProgress()">🗑️ Reset</button>
+<button onclick="reset()">🗑️ Reset</button>
 
 <script>
-const s1=["https://play.candies.monster/lTDT","https://play.candies.monster/NHXI","https://play.candies.monster/ePeK","https://play.candies.monster/DzSE","https://play.candies.monster/yxRy","https://play.candies.monster/UxTs","https://play.candies.monster/IjFf","https://play.candies.monster/mmqQ","https://play.candies.monster/tlue","https://play.candies.monster/WBjF","https://play.candies.monster/hniT","https://play.candies.monster/QOLQ","https://play.candies.monster/SfsN","https://play.candies.monster/Rbkz","https://play.candies.monster/dKXr"];
-const s2=["https://play.candies.monster/rEgN","https://play.candies.monster/aVzu","https://play.candies.monster/dzxy","https://play.candies.monster/bPDj","https://play.candies.monster/Aelr","https://play.candies.monster/Tejh","https://play.candies.monster/UgbA","https://play.candies.monster/dOkj","https://play.candies.monster/MGPv","https://play.candies.monster/HAJA"];
-const s3=["https://play.candies.monster/vzhJ","https://play.candies.monster/crLu","https://play.candies.monster/DqOJ","https://play.candies.monster/pdWX","https://play.candies.monster/SCXl","https://play.candies.monster/YdIg","https://play.candies.monster/Vwsm","https://play.candies.monster/ivfp","https://play.candies.monster/CsYA","https://play.candies.monster/Dcro"];
-const s4=["https://play.candies.monster/MjBA","https://play.candies.monster/oxMQ","https://play.candies.monster/KJXf","https://play.candies.monster/azSz","https://play.candies.monster/LDSu","https://play.candies.monster/WUlG","https://play.candies.monster/qarR","https://play.candies.monster/puVd","https://play.candies.monster/OWQI","https://play.candies.monster/lQzu"];
-const s5=["https://play.candies.monster/LvMb","https://play.candies.monster/jfwi","https://play.candies.monster/AnPf","https://play.candies.monster/uMeP","https://play.candies.monster/SztJ","https://play.candies.monster/fMSX","https://play.candies.monster/wlSF","https://play.candies.monster/MOpo","https://play.candies.monster/uros","https://play.candies.monster/IzjJ","https://play.candies.monster/KMuA","https://play.candies.monster/ZWwI","https://play.candies.monster/SaLm","https://play.candies.monster/khhV","https://play.candies.monster/jzCD"];
+const boxes=[
+["lTDT","NHXI","ePeK","DzSE","yxRy","UxTs","IjFf","mmqQ","tlue","WBjF","hniT","QOLQ","SfsN","Rbkz","dKXr"],
+["rEgN","aVzu","dzxy","bPDj","Aelr","Tejh","UgbA","dOkj","MGPv","HAJA"],
+["vzhJ","crLu","DqOJ","pdWX","SCXl","YdIg","Vwsm","ivfp","CsYA","Dcro"],
+["MjBA","oxMQ","KJXf","azSz","LDSu","WUlG","qarR","puVd","OWQI","lQzu"],
+["LvMb","jfwi","AnPf","uMeP","SztJ","fMSX","wlSF","MOpo","uros","IzjJ","KMuA","ZWwI","SaLm","khhV","jzCD"],
+["AtWJ","ykvr","WNHq","wPBg","bzXb","lSap","DXIi","eFUq","QLJo","wlBP","nZvA","dpMi","yTjv","izUV","InJY"],
+["RIto","iYNG","rqAJ","pNvp","Qpbz","BjAH","gbuN","MtHw","nlxn","gRVA"]
+];
 
-// 🆕 CAIXA 6
-const s6=["https://play.candies.monster/AtWJ","https://play.candies.monster/ykvr","https://play.candies.monster/WNHq","https://play.candies.monster/wPBg","https://play.candies.monster/bzXb","https://play.candies.monster/lSap","https://play.candies.monster/DXIi","https://play.candies.monster/Hyia","https://play.candies.monster/QLJo","https://play.candies.monster/wlBP","https://play.candies.monster/nZvA","https://play.candies.monster/dpMi","https://play.candies.monster/yTjv","https://play.candies.monster/izUV","https://play.candies.monster/InJY"];
+const need=[0,35,70,95,125,170,210];
 
-let progress=parseInt(localStorage.getItem("progress"))||1;
-let stars=JSON.parse(localStorage.getItem("stars"))||{};
+let progress=parseInt(localStorage.getItem("p"))||1;
+let stars=JSON.parse(localStorage.getItem("s"))||{};
 
-function showCodeInput(){codeInput.style.display="inline";}
+function totalStars(){let t=0;for(let k in stars)t+=stars[k];return t}
+function toggle(id){document.getElementById(id).classList.toggle("hidden")}
 
-function checkCode(e){
- if(e.key==="Enter" && e.target.value==="Zeptolab"){
-  progress=300;
-  for(let i=1;i<=75;i++) stars[i]=3;
-  localStorage.setItem("progress",progress);
-  localStorage.setItem("stars",JSON.stringify(stars));
-  location.reload();
- }
+function openBox(n){
+ if(totalStars()<need[n-1]) return;
+ toggle('s'+n);
 }
 
-function toggle(id){document.getElementById(id).classList.toggle("hidden");}
-function totalStars(){let t=0;for(let k in stars)t+=stars[k];return t;}
+function build(){
+ let levelCounter=1;
+ boxes.forEach((b,i)=>{
+  let div=document.getElementById('s'+(i+1));
+  div.innerHTML="";
+  b.forEach((code,j)=>{
+    let lvl=levelCounter++;
+    let btn=document.createElement("button");
 
-function toggleS2(){if(totalStars()>=35)toggle('s2');}
-function toggleS3(){if(totalStars()>=70)toggle('s3');}
-function toggleS4(){if(totalStars()>=95)toggle('s4');}
-function toggleS5(){if(totalStars()>=125)toggle('s5');}
-function toggleS6(){if(totalStars()>=170)toggle('s6');}
+    let starsTxt = stars[lvl] ? "⭐".repeat(stars[lvl]) : "";
+    btn.innerHTML=(j+1)+"<br>"+starsTxt;
 
-function create(list,id,offset){
- let c=document.getElementById(id);c.innerHTML="";
- list.forEach((link,i)=>{
-  let lvl=i+1+offset;
-  let b=document.createElement("button");
-  b.innerHTML=(i+1)+"<span class='levelStars'>"+(stars[lvl]?"⭐".repeat(stars[lvl]):"")+"</span>";
-  if(lvl<progress)b.className="completed";
-  else if(lvl===progress)b.className="unlocked";
-  else b.className="locked";
-  b.onclick=(e)=>{e.stopPropagation();if(lvl<=progress){localStorage.setItem("currentLevel",lvl);window.open(link,'_blank');starBtns.style.display="block";}};
-  c.appendChild(b);
+    if(lvl<=progress){
+      btn.className="unlocked";
+      btn.onclick=(e)=>{
+        e.stopPropagation();
+        localStorage.setItem("c",lvl);
+        window.open("https://play.candies.monster/"+code,'_blank');
+      }
+    } else btn.className="locked";
+
+    div.appendChild(btn);
+  });
  });
 }
 
 function finish(n){
- let lvl=parseInt(localStorage.getItem("currentLevel"));
- if(lvl){
-  stars[lvl]=n;
-  if(lvl===progress){progress++;localStorage.setItem("progress",progress);} 
-  localStorage.setItem("stars",JSON.stringify(stars));
+ let lvl=parseInt(localStorage.getItem("c"));
+ if(!lvl)return;
+
+ // guarda estrelas corretamente
+ stars[lvl]=Math.max(stars[lvl]||0,n);
+
+ // AVANÇAR NÍVEL SEMPRE
+ if(lvl>=progress) progress=lvl+1;
+
+ localStorage.setItem("p",progress);
+ localStorage.setItem("s",JSON.stringify(stars));
+ alert("⭐ Guardadas!");
+ location.reload();
+}
+
+function updateLocks(){
+ for(let i=1;i<=7;i++){
+  let needStars=need[i-1]-totalStars();
+  let el=document.getElementById('l'+i);
+  if(i==1){el.style.display="none";continue;}
+  if(needStars>0){el.style.display="flex";el.innerText=needStars+" ⭐"}
+  else el.style.display="none";
+ }
+}
+
+function toggleMusic(){
+ let m=document.getElementById("music");
+ if(!m.src) m.src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_115b9b3f3f.mp3";
+ if(m.paused) m.play().catch(()=>{});
+ else m.pause();
+}
+
+function showCode(){document.getElementById("code").style.display="inline"}
+
+function applyCode(e){
+ if(e.key==="Enter" && e.target.value==="Zeptolab"){
+  progress=999;
+
+  // DAR 3⭐ A TODOS
+  let totalLevels=0;
+  boxes.forEach(b=> totalLevels+=b.length);
+  for(let i=1;i<=totalLevels;i++){ stars[i]=3; }
+
+  localStorage.setItem("p",progress);
+  localStorage.setItem("s",JSON.stringify(stars));
+
+  alert("Tudo desbloqueado + 3⭐!");
   location.reload();
  }
 }
 
-function resetProgress(){localStorage.clear();location.reload();}
+function reset(){localStorage.clear();location.reload()}
 
-function update(){
- let t=[0,0,0,0,0,0];
- for(let i in stars){let v=stars[i],lvl=parseInt(i);
- if(lvl<=15)t[0]+=v;
- else if(lvl<=25)t[1]+=v;
- else if(lvl<=35)t[2]+=v;
- else if(lvl<=45)t[3]+=v;
- else if(lvl<=60)t[4]+=v;
- else if(lvl<=75)t[5]+=v;
- }
- stars1.innerText="⭐ "+t[0]+"/45";
- stars2.innerText="⭐ "+t[1]+"/30";
- stars3.innerText="⭐ "+t[2]+"/30";
- stars4.innerText="⭐ "+t[3]+"/30";
- stars5.innerText="⭐ "+t[4]+"/45";
- stars6.innerText="⭐ "+t[5]+"/45";
-
- let locks=[35,70,95,125,170];
- ["lock2","lock3","lock4","lock5","lock6"].forEach((id,i)=>{
- let need=locks[i]-totalStars();
- let el=document.getElementById(id);
- el.style.display=need>0?"flex":"none";
- el.innerText=need>0?need+" ⭐":"";
- });
-}
-
-create(s1,"s1",0);
-create(s2,"s2",15);
-create(s3,"s3",25);
-create(s4,"s4",35);
-create(s5,"s5",45);
-create(s6,"s6",60);
-update();
+build();
+updateLocks();
 </script>
-
 </body>
 </html>
